@@ -5,6 +5,7 @@ Static website for `fitbite.dev`, including:
 - Landing page: `index.html`
 - Privacy policy: `privacy.html`
 - Support page: `support.html`
+- Terms of Service: `terms.html`
 - GitHub Pages custom domain file: `CNAME`
 
 ## Publish on GitHub Pages
@@ -49,6 +50,7 @@ Use these URLs in App Store Connect:
 - Marketing URL: `https://fitbite.dev/`
 - Privacy Policy URL: `https://fitbite.dev/privacy.html`
 - Support URL: `https://fitbite.dev/support.html`
+- Terms URL: `https://fitbite.dev/terms.html`
 
 Before App Store review, update the privacy policy so it exactly matches what FitBite collects and which services it uses.
 "# fitbite-landing" 
