@@ -543,8 +543,8 @@
   </footer>
 
   <script>
-    // Formspree'de ücretsiz form oluşturup ID'yi buraya yaz: https://formspree.io/forms
-    var FORMSPREE_ENDPOINT = 'https://formspree.io/f/noreply@fitbite.dev';
+    // Bekleme listesi — kendi API'miz (Render) + Resend hos geldin maili.
+    var WAITLIST_ENDPOINT = 'https://fitbite-backend-xorm.onrender.com/api/waitlist';
 
     var I = {
       tr: {
@@ -662,14 +662,10 @@
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
           msg.textContent = I[lang].err_msg; msg.classList.add('err'); return;
         }
-        if (FORMSPREE_ENDPOINT.indexOf('YOUR_FORM_ID') !== -1) {
-          window.location.href = 'mailto:hello@fitbite.dev?subject=FitBite%20waitlist&body=' + encodeURIComponent(email);
-          return;
-        }
-        fetch(FORMSPREE_ENDPOINT, {
+        fetch(WAITLIST_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({ email: email }),
+          body: JSON.stringify({ email: email, locale: lang }),
         }).then(function (r) {
           if (r.ok) { msg.textContent = I[lang].ok_msg; msg.classList.add('ok'); form.reset(); }
           else { msg.textContent = I[lang].err_msg; msg.classList.add('err'); }
