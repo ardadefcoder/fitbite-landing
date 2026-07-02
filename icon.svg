@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4338CA"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+    <radialGradient id="apple" cx="40%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E0E7FF"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background — rounded indigo gradient -->
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+
+  <!-- Subtle inner glow -->
+  <circle cx="512" cy="480" r="380" fill="rgba(255,255,255,0.04)"/>
+
+  <!-- Apple body — white/light on indigo -->
+  <circle cx="512" cy="520" r="260" fill="url(#apple)"/>
+
+  <!-- Bite cutout -->
+  <circle cx="710" cy="350" r="95" fill="url(#bg)"/>
+
+  <!-- Stem -->
+  <path d="M 512 260 Q 518 210 506 188" stroke="#C7D2FE" stroke-width="14" stroke-linecap="round" fill="none"/>
+
+  <!-- Leaf -->
+  <path d="M 510 210 Q 570 160 578 220" fill="#34D399"/>
+  <path d="M 510 210 Q 546 195 578 220" stroke="#10B981" stroke-width="2.5" fill="none"/>
+
+  <!-- Left eye -->
+  <circle cx="430" cy="490" r="24" fill="#312E81"/>
+  <circle cx="440" cy="480" r="8" fill="#FFFFFF"/>
+
+  <!-- Right eye -->
+  <circle cx="580" cy="490" r="24" fill="#312E81"/>
+  <circle cx="590" cy="480" r="8" fill="#FFFFFF"/>
+
+  <!-- Confident smirk -->
+  <path d="M 445 580 Q 512 640 585 575" stroke="#312E81" stroke-width="10" fill="none" stroke-linecap="round"/>
+
+  <!-- Minimal blush -->
+  <ellipse cx="390" cy="545" rx="22" ry="10" fill="#C7D2FE" opacity="0.5"/>
+  <ellipse cx="620" cy="545" rx="22" ry="10" fill="#C7D2FE" opacity="0.5"/>
+</svg>
