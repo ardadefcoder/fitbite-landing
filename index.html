@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FitBite — Fotoğrafını çek, kalorini bil</title>
-  <meta name="description" content="Yemeğinin fotoğrafını çek, yapay zeka kalori ve makrolarını saniyeler içinde hesaplasın. Apple Health entegrasyonu, AI diyet koçu ve XP sistemiyle kalori takibi hiç bu kadar kolay olmamıştı." />
+  <meta name="description" content="Yemeğinin fotoğrafını çek, yapay zeka kalori ve makrolarını saniyeler içinde hesaplasın. Apple Health entegrasyonu, AI diyet koçu ve XP sistemiyle kalori takibi." />
   <meta property="og:title" content="FitBite — Snap your meal. Know your calories." />
   <meta property="og:description" content="AI-powered calorie tracking with Apple Health sync, diet coaching and gamified progress." />
   <meta property="og:url" content="https://fitbite.dev" />
@@ -12,226 +12,353 @@
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0C0C10;
-      --bg-soft: #121218;
-      --card: #17171F;
-      --border: #26262E;
-      --primary: #6366F1;
-      --primary-light: #818CF8;
-      --primary-dark: #4F46E5;
-      --primary-soft: #2A1F3F;
-      --accent: #26C6A4;
-      --accent-light: #5EE6C9;
-      --accent-soft: #0E2F26;
+      --bg: #05050A;
+      --bg2: #0A0714;
+      --card: rgba(20, 14, 38, .55);
+      --border: rgba(168, 85, 247, .18);
+      --border-hot: rgba(168, 85, 247, .55);
+      --neon: #A855F7;
+      --neon-hi: #C084FC;
+      --neon-deep: #6D28D9;
+      --accent: #2DE0B6;
+      --accent-hi: #6FF7D8;
       --orange: #FFB74D;
-      --red: #FF6B6B;
-      --cyan: #4DD0E1;
-      --text: #FFFFFF;
-      --text-2: #B3B3B8;
-      --text-3: #8E8E93;
-      --radius: 20px;
+      --text: #F4F1FF;
+      --text-2: #B9B3D6;
+      --text-3: #7C76A0;
+      --glow: 0 0 24px rgba(168,85,247,.55), 0 0 64px rgba(168,85,247,.25);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      overflow-x: hidden;
+      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg); color: var(--text);
+      line-height: 1.6; overflow-x: hidden;
     }
-    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    ::selection { background: rgba(168,85,247,.4); }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: #08060F; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(var(--neon-deep), var(--neon)); border-radius: 5px; }
+    .wrap { max-width: 1140px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+    .mono { font-family: 'Orbitron', monospace; }
 
-    /* ambient glow */
-    .glow {
-      position: fixed; pointer-events: none; z-index: 0;
-      width: 640px; height: 640px; border-radius: 50%;
-      filter: blur(140px); opacity: .22;
+    /* ==================== BACKGROUND FX ==================== */
+    .fx { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    /* synthwave zemin ızgarası */
+    .fx-grid {
+      position: absolute; left: -50%; right: -50%; bottom: -12%; height: 62vh;
+      background:
+        linear-gradient(rgba(168,85,247,.28) 1.5px, transparent 1.5px),
+        linear-gradient(90deg, rgba(168,85,247,.28) 1.5px, transparent 1.5px);
+      background-size: 68px 68px;
+      transform: perspective(560px) rotateX(62deg);
+      transform-origin: center bottom;
+      animation: gridmove 1.6s linear infinite;
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,.85), transparent 82%);
+              mask-image: linear-gradient(to top, rgba(0,0,0,.85), transparent 82%);
     }
-    .glow-1 { background: var(--primary); top: -220px; left: -160px; }
-    .glow-2 { background: var(--accent); top: 30%; right: -260px; opacity: .12; }
+    @keyframes gridmove { to { background-position: 0 68px, 0 0; } }
+    .fx-horizon {
+      position: absolute; left: 0; right: 0; bottom: 34vh; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon), transparent);
+      filter: blur(1px); opacity: .5;
+    }
+    /* dev nefes alan glow küreleri */
+    .orb { position: absolute; border-radius: 50%; filter: blur(130px); }
+    .orb-1 { width: 620px; height: 620px; background: rgba(124,58,237,.32); top: -220px; left: -180px; animation: breathe 9s ease-in-out infinite; }
+    .orb-2 { width: 520px; height: 520px; background: rgba(45,224,182,.14); top: 34%; right: -240px; animation: breathe 11s 2s ease-in-out infinite; }
+    .orb-3 { width: 480px; height: 480px; background: rgba(168,85,247,.20); bottom: -180px; left: 30%; animation: breathe 13s 1s ease-in-out infinite; }
+    @keyframes breathe { 0%,100% { opacity:.6; } 50% { opacity:1; } }
+    /* arkada HIZLI akan ışık çizgileri */
+    .streak {
+      position: absolute; height: 2px; width: 420px; border-radius: 999px;
+      background: linear-gradient(90deg, transparent, var(--neon-hi), #fff, transparent);
+      opacity: 0; transform: rotate(-24deg);
+      animation: fly 2.6s linear infinite;
+      box-shadow: 0 0 12px rgba(192,132,252,.8);
+    }
+    .streak.s2 { animation-duration: 2s;   animation-delay: .7s;  width: 300px; }
+    .streak.s3 { animation-duration: 3.4s; animation-delay: 1.4s; width: 520px; }
+    .streak.s4 { animation-duration: 2.2s; animation-delay: 2.1s; width: 260px;
+      background: linear-gradient(90deg, transparent, var(--accent-hi), #fff, transparent);
+      box-shadow: 0 0 12px rgba(111,247,216,.8); }
+    .streak.s5 { animation-duration: 2.9s; animation-delay: .3s;  width: 380px; }
+    @keyframes fly {
+      0%   { opacity: 0; transform: translate3d(-30vw, 20vh, 0) rotate(-24deg); }
+      8%   { opacity: .9; }
+      92%  { opacity: .9; }
+      100% { opacity: 0; transform: translate3d(130vw, -42vh, 0) rotate(-24deg); }
+    }
+    .streak { top: 22%; } .streak.s2 { top: 48%; } .streak.s3 { top: 66%; }
+    .streak.s4 { top: 34%; } .streak.s5 { top: 80%; }
+    /* yıldız tozu */
+    .dust { position: absolute; inset: 0;
+      background-image:
+        radial-gradient(1.5px 1.5px at 12% 18%, rgba(255,255,255,.5), transparent),
+        radial-gradient(1px 1px at 34% 62%, rgba(192,132,252,.6), transparent),
+        radial-gradient(1.5px 1.5px at 58% 28%, rgba(255,255,255,.35), transparent),
+        radial-gradient(1px 1px at 76% 74%, rgba(111,247,216,.5), transparent),
+        radial-gradient(1.5px 1.5px at 88% 12%, rgba(255,255,255,.4), transparent),
+        radial-gradient(1px 1px at 22% 86%, rgba(192,132,252,.5), transparent);
+      animation: twinkle 4s ease-in-out infinite alternate;
+    }
+    @keyframes twinkle { to { opacity: .35; } }
+    /* film greni */
+    .noise { position: fixed; inset: 0; z-index: 40; pointer-events: none; opacity: .05; mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
 
-    /* ---------- NAV ---------- */
-    nav {
-      position: sticky; top: 0; z-index: 50;
-      backdrop-filter: blur(16px);
-      background: rgba(12,12,16,.72);
-      border-bottom: 1px solid var(--border);
+    /* ==================== DEV KADRAN (giant dial) ==================== */
+    .dial {
+      position: absolute; top: 50%; right: -26vmin; width: 108vmin; height: 108vmin;
+      margin-top: -54vmin; z-index: 0; pointer-events: none; opacity: .5;
     }
-    .nav-in { display: flex; align-items: center; justify-content: space-between; height: 64px; }
-    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; letter-spacing: -.4px; color: var(--text); text-decoration: none; }
-    .brand img { width: 32px; height: 32px; border-radius: 9px; }
+    .dial svg { width: 100%; height: 100%; overflow: visible; }
+    .dial .ring-a { animation: spin 70s linear infinite; transform-origin: center; }
+    .dial .ring-b { animation: spin 34s linear infinite reverse; transform-origin: center; }
+    .dial .ring-c { animation: spin 120s linear infinite; transform-origin: center; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* scroll progress */
+    .progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 100;
+      background: linear-gradient(90deg, var(--neon-deep), var(--neon), var(--accent));
+      box-shadow: 0 0 14px rgba(168,85,247,.9); }
+
+    /* ==================== NAV ==================== */
+    nav { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(18px);
+      background: rgba(5,5,10,.6); border-bottom: 1px solid var(--border); }
+    .nav-in { display: flex; align-items: center; justify-content: space-between; height: 66px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px;
+      letter-spacing: .5px; color: var(--text); text-decoration: none; }
+    .brand img { width: 32px; height: 32px; border-radius: 9px; box-shadow: 0 0 18px rgba(168,85,247,.5); }
     .nav-links { display: flex; align-items: center; gap: 26px; }
-    .nav-links a { color: var(--text-2); text-decoration: none; font-size: 14px; font-weight: 600; transition: color .2s; }
-    .nav-links a:hover { color: var(--text); }
-    .lang-btn {
-      background: var(--card); border: 1px solid var(--border); color: var(--text);
-      font: inherit; font-size: 13px; font-weight: 700; padding: 7px 14px;
-      border-radius: 999px; cursor: pointer; transition: border-color .2s;
-    }
-    .lang-btn:hover { border-color: var(--primary); }
+    .nav-links a { color: var(--text-2); text-decoration: none; font-size: 14px; font-weight: 600;
+      transition: color .2s, text-shadow .2s; }
+    .nav-links a:hover { color: var(--neon-hi); text-shadow: 0 0 12px rgba(192,132,252,.8); }
+    .lang-btn { background: transparent; border: 1px solid var(--border-hot); color: var(--neon-hi);
+      font: inherit; font-size: 13px; font-weight: 700; padding: 7px 16px; border-radius: 999px;
+      cursor: pointer; transition: all .25s; text-shadow: 0 0 10px rgba(192,132,252,.6); }
+    .lang-btn:hover { background: rgba(168,85,247,.15); box-shadow: var(--glow); }
 
-    /* ---------- HERO ---------- */
-    .hero { position: relative; z-index: 1; padding: 84px 0 60px; display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: center; }
-    .badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--primary-soft); color: var(--primary-light);
-      border: 1px solid rgba(129,140,248,.25);
-      font-size: 13px; font-weight: 700; padding: 7px 16px; border-radius: 999px;
-      margin-bottom: 22px;
-    }
-    .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 1.8s infinite; }
-    @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
-    h1 { font-size: clamp(38px, 5.2vw, 58px); font-weight: 900; letter-spacing: -1.8px; line-height: 1.08; }
-    h1 .grad {
-      background: linear-gradient(92deg, var(--primary-light), var(--accent-light));
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-    }
-    .hero p.sub { color: var(--text-2); font-size: 17px; max-width: 480px; margin: 20px 0 32px; }
+    /* ==================== HERO ==================== */
+    .hero { position: relative; z-index: 1; padding: 92px 0 40px;
+      display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: center; min-height: 86vh; }
+    .badge { display: inline-flex; align-items: center; gap: 9px;
+      border: 1px solid var(--border-hot); color: var(--neon-hi);
+      background: rgba(168,85,247,.08);
+      font-size: 12.5px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase;
+      padding: 8px 18px; border-radius: 999px; margin-bottom: 26px;
+      box-shadow: inset 0 0 18px rgba(168,85,247,.15), 0 0 22px rgba(168,85,247,.25);
+      animation: badgepulse 2.6s ease-in-out infinite; }
+    @keyframes badgepulse { 0%,100% { box-shadow: inset 0 0 18px rgba(168,85,247,.15), 0 0 16px rgba(168,85,247,.2);} 50% { box-shadow: inset 0 0 24px rgba(168,85,247,.3), 0 0 34px rgba(168,85,247,.5);} }
+    .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+      box-shadow: 0 0 10px var(--accent); animation: pulse 1.6s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .3 } }
+    h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(34px, 4.8vw, 56px);
+      font-weight: 900; letter-spacing: -.5px; line-height: 1.14; text-transform: uppercase; }
+    h1 .grad { background: linear-gradient(92deg, var(--neon-hi) 10%, #fff 45%, var(--accent-hi) 90%);
+      background-size: 220% auto; -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: shine 5s linear infinite;
+      filter: drop-shadow(0 0 22px rgba(168,85,247,.55)); }
+    @keyframes shine { to { background-position: 220% center; } }
+    .hero p.sub { color: var(--text-2); font-size: 17px; max-width: 480px; margin: 22px 0 34px; }
 
-    /* waitlist form */
-    .waitlist { display: flex; gap: 10px; max-width: 460px; }
-    .waitlist input {
-      flex: 1; background: var(--card); border: 1px solid var(--border);
-      color: var(--text); font: inherit; font-size: 15px;
-      padding: 14px 18px; border-radius: 14px; outline: none; transition: border-color .2s;
-    }
-    .waitlist input:focus { border-color: var(--primary); }
-    .waitlist button {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: #fff; border: 0; font: inherit; font-size: 15px; font-weight: 700;
-      padding: 14px 24px; border-radius: 14px; cursor: pointer; white-space: nowrap;
-      transition: transform .15s, box-shadow .2s;
-      box-shadow: 0 8px 24px rgba(99,102,241,.35);
-    }
-    .waitlist button:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(99,102,241,.45); }
+    .waitlist { display: flex; gap: 10px; max-width: 470px; }
+    .waitlist input { flex: 1; background: rgba(10,7,20,.8); border: 1px solid var(--border);
+      color: var(--text); font: inherit; font-size: 15px; padding: 15px 18px; border-radius: 12px;
+      outline: none; transition: all .25s; }
+    .waitlist input:focus { border-color: var(--neon); box-shadow: 0 0 0 3px rgba(168,85,247,.2), 0 0 24px rgba(168,85,247,.35); }
+    .waitlist button { position: relative; overflow: hidden;
+      background: linear-gradient(135deg, var(--neon), var(--neon-deep));
+      color: #fff; border: 0; font: inherit; font-size: 15px; font-weight: 700; letter-spacing: .5px;
+      padding: 15px 26px; border-radius: 12px; cursor: pointer; white-space: nowrap;
+      transition: transform .15s, box-shadow .25s; box-shadow: 0 0 26px rgba(168,85,247,.55); }
+    .waitlist button:hover { transform: translateY(-2px); box-shadow: 0 0 44px rgba(168,85,247,.85); }
+    .waitlist button::after { content: ''; position: absolute; top: 0; left: -80%; width: 40%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent);
+      transform: skewX(-24deg); animation: sweep 3s ease infinite; }
+    @keyframes sweep { 0%, 60% { left: -80%; } 100% { left: 160%; } }
     .form-msg { font-size: 13px; font-weight: 600; margin-top: 12px; min-height: 20px; }
-    .form-msg.ok { color: var(--accent-light); }
-    .form-msg.err { color: var(--red); }
-    .hero-note { display: flex; gap: 18px; margin-top: 26px; color: var(--text-3); font-size: 13px; font-weight: 600; }
+    .form-msg.ok { color: var(--accent-hi); text-shadow: 0 0 12px rgba(45,224,182,.6); }
+    .form-msg.err { color: #FF6B8B; }
+    .hero-note { display: flex; gap: 18px; margin-top: 26px; color: var(--text-3); font-size: 13px; font-weight: 600; flex-wrap: wrap; }
     .hero-note span { display: flex; align-items: center; gap: 6px; }
 
-    /* ---------- PHONE MOCKUP ---------- */
-    .phone-col { display: flex; justify-content: center; }
-    .phone {
-      width: 300px; background: #101014;
-      border: 3px solid #2A2A32; border-radius: 46px;
-      padding: 14px; box-shadow: 0 40px 90px rgba(0,0,0,.55), 0 0 0 1px rgba(129,140,248,.08);
-      position: relative; transform: rotate(0deg);
-    }
-    .notch { width: 110px; height: 26px; background: #000; border-radius: 999px; margin: 2px auto 12px; }
+    /* ==================== PHONE ==================== */
+    .phone-col { display: flex; justify-content: center; perspective: 1200px; }
+    .tilt { transition: transform .2s ease-out; transform-style: preserve-3d; }
+    .phone { width: 300px; background: #0A0714; border: 2px solid rgba(168,85,247,.5); border-radius: 46px;
+      padding: 14px; position: relative; animation: floaty 6s ease-in-out infinite;
+      box-shadow: 0 0 0 1px rgba(192,132,252,.15), 0 0 42px rgba(168,85,247,.4),
+                  0 0 120px rgba(124,58,237,.25), 0 44px 90px rgba(0,0,0,.65); }
+    @keyframes floaty { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-14px);} }
+    .notch { width: 110px; height: 26px; background: #000; border-radius: 999px; margin: 2px auto 12px;
+      border: 1px solid rgba(168,85,247,.25); }
     .screen { padding: 4px 8px 12px; }
     .scr-greet { font-size: 12px; color: var(--text-3); font-weight: 600; }
-    .scr-title { font-size: 17px; font-weight: 800; letter-spacing: -.4px; margin-bottom: 14px; }
+    .scr-title { font-size: 17px; font-weight: 700; letter-spacing: -.3px; margin-bottom: 14px; }
     .ring-wrap { display: flex; justify-content: center; position: relative; margin-bottom: 6px; }
     .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .ring-num { font-size: 30px; font-weight: 900; letter-spacing: -1px; }
+    .ring-num { font-family: 'Orbitron', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: 0;
+      text-shadow: 0 0 18px rgba(192,132,252,.7); }
     .ring-lbl { font-size: 10px; color: var(--text-3); font-weight: 600; }
     .ring svg { transform: rotate(-90deg); }
-    .ring .track { stroke: #232330; }
-    .ring .prog { stroke: url(#ringGrad); stroke-linecap: round; stroke-dasharray: 427; stroke-dashoffset: 427; animation: ring 1.6s .4s cubic-bezier(.22,.8,.35,1) forwards; }
+    .ring .track { stroke: rgba(168,85,247,.14); }
+    .ring .prog { stroke: url(#ringGrad); stroke-linecap: round; stroke-dasharray: 427; stroke-dashoffset: 427;
+      animation: ring 1.6s .4s cubic-bezier(.22,.8,.35,1) forwards;
+      filter: drop-shadow(0 0 6px rgba(168,85,247,.8)); }
     @keyframes ring { to { stroke-dashoffset: 148; } }
-    .bonus-pill {
-      display: flex; align-items: center; justify-content: center; gap: 5px;
-      background: var(--accent-soft); color: var(--accent-light);
-      font-size: 11px; font-weight: 700; border-radius: 999px;
-      padding: 5px 12px; width: fit-content; margin: 0 auto 14px;
-    }
+    .bonus-pill { display: flex; align-items: center; justify-content: center; gap: 5px;
+      border: 1px solid rgba(45,224,182,.4); color: var(--accent-hi); background: rgba(45,224,182,.08);
+      font-size: 11px; font-weight: 700; border-radius: 999px; padding: 5px 12px; width: fit-content;
+      margin: 0 auto 14px; box-shadow: 0 0 16px rgba(45,224,182,.25); }
     .macro { margin-bottom: 9px; }
     .macro-head { display: flex; justify-content: space-between; font-size: 10.5px; font-weight: 700; margin-bottom: 4px; }
     .macro-head .lbl { color: var(--text-2); }
-    .macro-track { height: 6px; border-radius: 3px; background: #232330; overflow: hidden; }
-    .macro-fill { height: 100%; border-radius: 3px; width: 0; animation: fill 1.2s .8s ease forwards; }
+    .macro-track { height: 6px; border-radius: 3px; background: rgba(168,85,247,.12); overflow: hidden; }
+    .macro-fill { height: 100%; border-radius: 3px; width: 0; animation: fill 1.2s .8s ease forwards;
+      box-shadow: 0 0 10px currentColor; }
     @keyframes fill { to { width: var(--w); } }
-    .scr-card {
-      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-      padding: 12px; margin-top: 12px;
-    }
-    .scr-card-title { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; margin-bottom: 8px; }
+    .scr-card { background: rgba(20,14,38,.7); border: 1px solid var(--border); border-radius: 16px;
+      padding: 12px; margin-top: 12px; }
+    .scr-card-title { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; margin-bottom: 8px; }
     .steps-row { display: flex; justify-content: space-between; font-size: 10.5px; font-weight: 700; margin-bottom: 4px; }
     .steps-row .goal { color: var(--text-3); }
     .mini-metrics { display: flex; gap: 6px; margin-top: 10px; }
-    .mini-metric {
-      flex: 1; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px;
-      padding: 7px 4px; text-align: center;
-    }
+    .mini-metric { flex: 1; background: rgba(5,5,10,.6); border: 1px solid var(--border); border-radius: 10px;
+      padding: 7px 4px; text-align: center; }
     .mini-metric .v { font-size: 12px; font-weight: 800; }
     .mini-metric .k { font-size: 8.5px; color: var(--text-3); font-weight: 600; }
 
-    /* ---------- SECTIONS ---------- */
-    section { position: relative; z-index: 1; padding: 76px 0; }
-    .sec-head { text-align: center; max-width: 620px; margin: 0 auto 52px; }
-    .sec-kicker { color: var(--primary-light); font-size: 13px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
-    .sec-head h2 { font-size: clamp(28px, 3.6vw, 40px); font-weight: 900; letter-spacing: -1px; margin: 10px 0 12px; }
+    /* ==================== MARQUEE ==================== */
+    .marquee-band { position: relative; z-index: 2; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      background: rgba(10,7,20,.5); backdrop-filter: blur(6px); overflow: hidden; padding: 14px 0; }
+    .marquee-band + .marquee-band { border-top: 0; }
+    .mq { display: flex; width: max-content; gap: 0; animation: mq 22s linear infinite; }
+    .mq.rev { animation: mq2 26s linear infinite; }
+    .mq span { font-family: 'Orbitron', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; white-space: nowrap; padding: 0 28px; color: transparent;
+      -webkit-text-stroke: 1px rgba(192,132,252,.55); }
+    .mq span.solid { color: var(--neon-hi); -webkit-text-stroke: 0; text-shadow: 0 0 16px rgba(168,85,247,.7); }
+    .mq.rev span { -webkit-text-stroke: 1px rgba(111,247,216,.4); }
+    .mq.rev span.solid { color: var(--accent-hi); text-shadow: 0 0 16px rgba(45,224,182,.6); }
+    @keyframes mq  { to { transform: translateX(-50%); } }
+    @keyframes mq2 { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+
+    /* ==================== SECTIONS ==================== */
+    section { position: relative; z-index: 2; padding: 96px 0; }
+    .sec-head { text-align: center; max-width: 640px; margin: 0 auto 56px; }
+    .sec-kicker { font-family: 'Orbitron', sans-serif; color: var(--accent-hi); font-size: 12px; font-weight: 700;
+      letter-spacing: 4px; text-transform: uppercase; text-shadow: 0 0 14px rgba(45,224,182,.5); }
+    .sec-head h2 { font-family: 'Orbitron', sans-serif; font-size: clamp(24px, 3.4vw, 38px); font-weight: 800;
+      letter-spacing: 0; margin: 12px 0 12px; text-transform: uppercase;
+      text-shadow: 0 0 30px rgba(168,85,247,.35); }
     .sec-head p { color: var(--text-2); font-size: 16px; }
 
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-    .feature {
-      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 26px 24px; transition: transform .2s, border-color .2s;
-    }
-    .feature:hover { transform: translateY(-4px); border-color: rgba(129,140,248,.4); }
-    .feature .ico {
-      width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
-      font-size: 22px; margin-bottom: 16px; background: var(--primary-soft);
-    }
-    .feature.acc .ico { background: var(--accent-soft); }
-    .feature h3 { font-size: 16.5px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 8px; }
+    .feature { position: relative; background: var(--card); border: 1px solid var(--border); border-radius: 18px;
+      padding: 28px 24px; backdrop-filter: blur(10px); overflow: hidden;
+      transition: transform .25s, border-color .25s, box-shadow .25s; }
+    .feature::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(192,132,252,.8), transparent);
+      opacity: 0; transition: opacity .25s; }
+    .feature:hover { transform: translateY(-6px); border-color: var(--border-hot);
+      box-shadow: 0 0 34px rgba(168,85,247,.28), 0 18px 40px rgba(0,0,0,.5); }
+    .feature:hover::before { opacity: 1; }
+    .feature .ico { width: 48px; height: 48px; border-radius: 13px; display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 16px; background: rgba(168,85,247,.12);
+      border: 1px solid var(--border-hot); box-shadow: inset 0 0 16px rgba(168,85,247,.2), 0 0 14px rgba(168,85,247,.25); }
+    .feature.acc .ico { background: rgba(45,224,182,.08); border-color: rgba(45,224,182,.4);
+      box-shadow: inset 0 0 16px rgba(45,224,182,.15), 0 0 14px rgba(45,224,182,.2); }
+    .feature h3 { font-size: 16.5px; font-weight: 700; letter-spacing: -.2px; margin-bottom: 8px; }
     .feature p { color: var(--text-2); font-size: 14px; }
 
-    /* how it works */
-    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; counter-reset: step; }
-    .step { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 24px; position: relative; }
-    .step .num {
-      width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      font-weight: 800; font-size: 15px; margin-bottom: 16px;
-    }
-    .step h3 { font-size: 16.5px; font-weight: 800; margin-bottom: 8px; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .step { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 30px 24px;
+      position: relative; backdrop-filter: blur(10px); }
+    .step .num { font-family: 'Orbitron', sans-serif; font-size: 44px; font-weight: 900; line-height: 1;
+      margin-bottom: 14px; color: transparent; -webkit-text-stroke: 1.5px var(--neon-hi);
+      filter: drop-shadow(0 0 10px rgba(168,85,247,.5)); }
+    .step h3 { font-size: 16.5px; font-weight: 700; margin-bottom: 8px; }
     .step p { color: var(--text-2); font-size: 14px; }
 
-    /* CTA band */
-    .cta-band {
-      background: linear-gradient(135deg, rgba(99,102,241,.16), rgba(38,198,164,.10));
-      border: 1px solid rgba(129,140,248,.25); border-radius: 28px;
-      padding: 56px 32px; text-align: center;
-    }
-    .cta-band h2 { font-size: clamp(26px, 3.2vw, 36px); font-weight: 900; letter-spacing: -.8px; margin-bottom: 10px; }
-    .cta-band p { color: var(--text-2); margin-bottom: 26px; }
+    /* ==================== STATS ==================== */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; text-align: center; }
+    .stat { padding: 30px 10px; border: 1px solid var(--border); border-radius: 18px; background: var(--card);
+      backdrop-filter: blur(10px); }
+    .stat .v { font-family: 'Orbitron', sans-serif; font-size: clamp(34px, 4.4vw, 54px); font-weight: 900;
+      background: linear-gradient(180deg, #fff, var(--neon-hi));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      filter: drop-shadow(0 0 20px rgba(168,85,247,.5)); }
+    .stat .k { color: var(--text-3); font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-top: 6px; }
+
+    /* ==================== CTA ==================== */
+    .cta-shell { position: relative; border-radius: 26px; padding: 2px; overflow: hidden; }
+    .cta-shell::before { content: ''; position: absolute; inset: -120%;
+      background: conic-gradient(from 0deg, transparent 0 60deg, var(--neon) 90deg, var(--accent) 140deg, transparent 200deg 360deg);
+      animation: spin 5s linear infinite; }
+    .cta-band { position: relative; background: #0A0714; border-radius: 24px; padding: 58px 32px; text-align: center; }
+    .cta-band h2 { font-family: 'Orbitron', sans-serif; font-size: clamp(22px, 3vw, 34px); font-weight: 800;
+      text-transform: uppercase; margin-bottom: 10px; text-shadow: 0 0 30px rgba(168,85,247,.5); }
+    .cta-band p { color: var(--text-2); margin-bottom: 28px; }
     .cta-band .waitlist { margin: 0 auto; }
 
-    footer { border-top: 1px solid var(--border); padding: 34px 0 44px; position: relative; z-index: 1; }
+    footer { border-top: 1px solid var(--border); padding: 34px 0 44px; position: relative; z-index: 2;
+      background: rgba(5,5,10,.7); }
     .foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
     .foot .brand img { width: 26px; height: 26px; }
     .foot .brand { font-size: 15px; }
     .foot-meta { color: var(--text-3); font-size: 13px; }
-    .foot a { color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 600; }
-    .foot a:hover { color: var(--text); }
+    .foot a { color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 600; transition: color .2s, text-shadow .2s; }
+    .foot a:hover { color: var(--neon-hi); text-shadow: 0 0 12px rgba(192,132,252,.7); }
 
     /* reveal */
-    .rv { opacity: 0; transform: translateY(22px); transition: opacity .6s ease, transform .6s ease; }
-    .rv.in { opacity: 1; transform: none; }
+    .rv { opacity: 0; transform: translateY(30px) scale(.98); filter: blur(6px);
+      transition: opacity .7s ease, transform .7s ease, filter .7s ease; }
+    .rv.in { opacity: 1; transform: none; filter: none; }
 
     @media (max-width: 880px) {
-      .hero { grid-template-columns: 1fr; padding-top: 52px; text-align: center; }
+      .hero { grid-template-columns: 1fr; padding-top: 56px; text-align: center; min-height: unset; }
       .hero p.sub { margin-left: auto; margin-right: auto; }
       .waitlist { margin: 0 auto; }
       .hero-note { justify-content: center; }
       .grid, .steps { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
       .nav-links a[data-nav] { display: none; }
+      .dial { right: -60vmin; opacity: .3; }
     }
     @media (max-width: 480px) {
       .waitlist { flex-direction: column; }
-      .phone { width: 270px; }
+      .phone { width: 272px; }
+      .stats { grid-template-columns: 1fr 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .rv { opacity: 1; transform: none; filter: none; }
     }
   </style>
 </head>
 <body>
-  <div class="glow glow-1"></div>
-  <div class="glow glow-2"></div>
+  <div class="progress" id="progress"></div>
+
+  <!-- arka plan efektleri -->
+  <div class="fx">
+    <div class="dust"></div>
+    <div class="orb orb-1" data-px="0.10"></div>
+    <div class="orb orb-2" data-px="0.16"></div>
+    <div class="orb orb-3" data-px="0.06"></div>
+    <div class="streak"></div>
+    <div class="streak s2"></div>
+    <div class="streak s3"></div>
+    <div class="streak s4"></div>
+    <div class="streak s5"></div>
+    <div class="fx-horizon"></div>
+    <div class="fx-grid"></div>
+  </div>
+  <div class="noise"></div>
 
   <nav>
     <div class="wrap nav-in">
@@ -244,10 +371,29 @@
     </div>
   </nav>
 
-  <header class="wrap hero">
+  <header class="wrap hero" id="hero">
+    <!-- dev dönen kadran -->
+    <div class="dial" data-px="-0.12" aria-hidden="true">
+      <svg viewBox="0 0 100 100">
+        <g class="ring-a">
+          <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(168,85,247,.5)" stroke-width=".5"
+                  stroke-dasharray="0.6 2.2" />
+        </g>
+        <g class="ring-b">
+          <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(192,132,252,.4)" stroke-width="1.1"
+                  stroke-dasharray="7 14" stroke-linecap="round" />
+        </g>
+        <g class="ring-c">
+          <circle cx="50" cy="50" r="28" fill="none" stroke="rgba(45,224,182,.35)" stroke-width=".4"
+                  stroke-dasharray="0.4 3.4" />
+        </g>
+        <circle cx="50" cy="50" r="20" fill="none" stroke="rgba(168,85,247,.18)" stroke-width=".3" />
+      </svg>
+    </div>
+
     <div>
       <div class="badge"><span class="dot"></span><span data-i18n="badge"></span></div>
-      <h1><span data-i18n="h1a"></span> <span class="grad" data-i18n="h1b"></span></h1>
+      <h1><span data-i18n="h1a"></span><br/><span class="grad" data-i18n="h1b"></span></h1>
       <p class="sub" data-i18n="sub"></p>
 
       <form class="waitlist" id="waitlistForm" novalidate>
@@ -263,61 +409,67 @@
       </div>
     </div>
 
-    <div class="phone-col">
-      <div class="phone">
-        <div class="notch"></div>
-        <div class="screen">
-          <div class="scr-greet" data-i18n="scr_greet"></div>
-          <div class="scr-title" data-i18n="scr_today"></div>
+    <div class="phone-col" data-px="-0.04">
+      <div class="tilt" id="tilt">
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen">
+            <div class="scr-greet" data-i18n="scr_greet"></div>
+            <div class="scr-title" data-i18n="scr_today"></div>
 
-          <div class="ring-wrap">
-            <div class="ring">
-              <svg width="160" height="160" viewBox="0 0 160 160">
-                <defs>
-                  <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#818CF8"/>
-                    <stop offset="100%" stop-color="#26C6A4"/>
-                  </linearGradient>
-                </defs>
-                <circle class="track" cx="80" cy="80" r="68" fill="none" stroke-width="13"/>
-                <circle class="prog" cx="80" cy="80" r="68" fill="none" stroke-width="13"/>
-              </svg>
+            <div class="ring-wrap">
+              <div class="ring">
+                <svg width="160" height="160" viewBox="0 0 160 160">
+                  <defs>
+                    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#C084FC"/>
+                      <stop offset="100%" stop-color="#2DE0B6"/>
+                    </linearGradient>
+                  </defs>
+                  <circle class="track" cx="80" cy="80" r="68" fill="none" stroke-width="13"/>
+                  <circle class="prog" cx="80" cy="80" r="68" fill="none" stroke-width="13"/>
+                </svg>
+              </div>
+              <div class="ring-center">
+                <div class="ring-num">1.240</div>
+                <div class="ring-lbl" data-i18n="scr_remaining"></div>
+              </div>
             </div>
-            <div class="ring-center">
-              <div class="ring-num">1.240</div>
-              <div class="ring-lbl" data-i18n="scr_remaining"></div>
+
+            <div class="bonus-pill">🔥 <span data-i18n="scr_bonus"></span></div>
+
+            <div class="macro">
+              <div class="macro-head"><span class="lbl">Protein</span><span>86 / 140 g</span></div>
+              <div class="macro-track"><div class="macro-fill" style="--w:61%; background:#C084FC; color:#C084FC"></div></div>
             </div>
-          </div>
+            <div class="macro">
+              <div class="macro-head"><span class="lbl" data-i18n="scr_carbs"></span><span>150 / 240 g</span></div>
+              <div class="macro-track"><div class="macro-fill" style="--w:62%; background:#FFB74D; color:#FFB74D"></div></div>
+            </div>
+            <div class="macro">
+              <div class="macro-head"><span class="lbl" data-i18n="scr_fat"></span><span>42 / 70 g</span></div>
+              <div class="macro-track"><div class="macro-fill" style="--w:60%; background:#2DE0B6; color:#2DE0B6"></div></div>
+            </div>
 
-          <div class="bonus-pill">🔥 <span data-i18n="scr_bonus"></span></div>
-
-          <div class="macro">
-            <div class="macro-head"><span class="lbl">Protein</span><span>86 / 140 g</span></div>
-            <div class="macro-track"><div class="macro-fill" style="--w:61%; background:#818CF8"></div></div>
-          </div>
-          <div class="macro">
-            <div class="macro-head"><span class="lbl" data-i18n="scr_carbs"></span><span>150 / 240 g</span></div>
-            <div class="macro-track"><div class="macro-fill" style="--w:62%; background:#FFB74D"></div></div>
-          </div>
-          <div class="macro">
-            <div class="macro-head"><span class="lbl" data-i18n="scr_fat"></span><span>42 / 70 g</span></div>
-            <div class="macro-track"><div class="macro-fill" style="--w:60%; background:#26C6A4"></div></div>
-          </div>
-
-          <div class="scr-card">
-            <div class="scr-card-title">❤️ <span data-i18n="scr_health"></span></div>
-            <div class="steps-row"><span data-i18n="scr_steps"></span><span>8.542 <span class="goal">/ 10.000</span></span></div>
-            <div class="macro-track"><div class="macro-fill" style="--w:85%; background:#6366F1"></div></div>
-            <div class="mini-metrics">
-              <div class="mini-metric"><div class="v">6,1 km</div><div class="k" data-i18n="scr_dist"></div></div>
-              <div class="mini-metric"><div class="v">42 <span style="font-size:9px" data-i18n="scr_min"></span></div><div class="k" data-i18n="scr_exercise"></div></div>
-              <div class="mini-metric"><div class="v">61 bpm</div><div class="k" data-i18n="scr_hr"></div></div>
+            <div class="scr-card">
+              <div class="scr-card-title">❤️ <span data-i18n="scr_health"></span></div>
+              <div class="steps-row"><span data-i18n="scr_steps"></span><span>8.542 <span class="goal">/ 10.000</span></span></div>
+              <div class="macro-track"><div class="macro-fill" style="--w:85%; background:#A855F7; color:#A855F7"></div></div>
+              <div class="mini-metrics">
+                <div class="mini-metric"><div class="v">6,1 km</div><div class="k" data-i18n="scr_dist"></div></div>
+                <div class="mini-metric"><div class="v">42 <span style="font-size:9px" data-i18n="scr_min"></span></div><div class="k" data-i18n="scr_exercise"></div></div>
+                <div class="mini-metric"><div class="v">61 bpm</div><div class="k" data-i18n="scr_hr"></div></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </header>
+
+  <!-- çift yönlü marquee -->
+  <div class="marquee-band"><div class="mq" id="mq1"></div></div>
+  <div class="marquee-band"><div class="mq rev" id="mq2"></div></div>
 
   <section id="features">
     <div class="wrap">
@@ -337,30 +489,43 @@
     </div>
   </section>
 
-  <section id="how">
+  <section id="how" style="padding-top: 0">
     <div class="wrap">
       <div class="sec-head rv">
         <div class="sec-kicker" data-i18n="how_kicker"></div>
         <h2 data-i18n="how_title"></h2>
       </div>
       <div class="steps">
-        <div class="step rv"><div class="num">1</div><h3 data-i18n="s1t"></h3><p data-i18n="s1d"></p></div>
-        <div class="step rv"><div class="num">2</div><h3 data-i18n="s2t"></h3><p data-i18n="s2d"></p></div>
-        <div class="step rv"><div class="num">3</div><h3 data-i18n="s3t"></h3><p data-i18n="s3d"></p></div>
+        <div class="step rv"><div class="num">01</div><h3 data-i18n="s1t"></h3><p data-i18n="s1d"></p></div>
+        <div class="step rv"><div class="num">02</div><h3 data-i18n="s2t"></h3><p data-i18n="s2d"></p></div>
+        <div class="step rv"><div class="num">03</div><h3 data-i18n="s3t"></h3><p data-i18n="s3d"></p></div>
       </div>
     </div>
   </section>
 
-  <section>
+  <section style="padding-top: 0">
     <div class="wrap">
-      <div class="cta-band rv">
-        <h2 data-i18n="cta_title"></h2>
-        <p data-i18n="cta_sub"></p>
-        <form class="waitlist" id="waitlistForm2" novalidate>
-          <input type="email" id="wlEmail2" required data-i18n-ph="email_ph" />
-          <button type="submit" data-i18n="notify_btn"></button>
-        </form>
-        <div class="form-msg" id="formMsg2"></div>
+      <div class="stats">
+        <div class="stat rv"><div class="v mono" data-count="5">0</div><div class="k" data-i18n="st1"></div></div>
+        <div class="stat rv"><div class="v mono" data-count="4">0</div><div class="k" data-i18n="st2"></div></div>
+        <div class="stat rv"><div class="v mono" data-count="10000">0</div><div class="k" data-i18n="st3"></div></div>
+        <div class="stat rv"><div class="v mono" data-count="200" data-suffix="+">0</div><div class="k" data-i18n="st4"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top: 0">
+    <div class="wrap">
+      <div class="cta-shell rv">
+        <div class="cta-band">
+          <h2 data-i18n="cta_title"></h2>
+          <p data-i18n="cta_sub"></p>
+          <form class="waitlist" id="waitlistForm2" novalidate>
+            <input type="email" id="wlEmail2" required data-i18n-ph="email_ph" />
+            <button type="submit" data-i18n="notify_btn"></button>
+          </form>
+          <div class="form-msg" id="formMsg2"></div>
+        </div>
       </div>
     </div>
   </section>
@@ -378,11 +543,9 @@
   </footer>
 
   <script>
-    // ================== WAITLIST ==================
     // Formspree'de ücretsiz form oluşturup ID'yi buraya yaz: https://formspree.io/forms
     var FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
 
-    // ================== i18n ==================
     var I = {
       tr: {
         nav_features: 'Özellikler', nav_how: 'Nasıl çalışır',
@@ -397,6 +560,7 @@
         scr_bonus: '+320 kcal hareket bonusu',
         scr_carbs: 'Karbonhidrat', scr_fat: 'Yağ',
         scr_health: 'Sağlık', scr_steps: 'Adım', scr_dist: 'Mesafe', scr_exercise: 'Egzersiz', scr_hr: 'Nabız', scr_min: 'dk',
+        mq: ['AI kalori analizi', 'Apple Health', 'XP & rütbeler', 'Günlük AI plan', 'Barkod tarama', 'Su takibi', 'Hareket bonusu', 'Makro koçu'],
         feat_kicker: 'Özellikler', feat_title: 'Kalori saymayı bırak, fotoğraf çek',
         feat_sub: 'FitBite, diyet takibinin sıkıcı kısımlarını yapay zekaya devreder — sen sadece yemeğine odaklan.',
         f1t: 'AI fotoğraf analizi', f1d: 'Tabağının fotoğrafını çek; Gemini destekli motor yemekleri tanır, kaloriyi ve protein/karb/yağ dağılımını çıkarır. Barkod okuma da cabası.',
@@ -404,14 +568,15 @@
         f3t: 'AI diyet koçu', f3d: 'Dengeli, yüksek protein, düşük karb veya keto seç; koçun "şu kadar daha protein al" der, tek dokunuşla günlük öğün planı oluşturur.',
         f4t: 'XP & rütbe sistemi', f4d: 'Her kayıt XP kazandırır. Rütbe atla, serini koru, maskotumuz Bitey seni motive etsin.',
         f5t: 'Barkod & akıllı arama', f5d: 'Paketli ürünleri barkodla tanı; yerel veritabanı + OpenFoodFacts + AI tahmini üçlüsü her yemeği bulur.',
-        f6t: 'Su, kilo ve 5 dil', f6d: 'Su ve kilo takibi, iOS ana ekran widget\u0131, koyu tema ve Türkçe dahil 5 dil desteği.',
+        f6t: 'Su, kilo ve 5 dil', f6d: 'Su ve kilo takibi, iOS ana ekran widgetı, koyu tema ve Türkçe dahil 5 dil desteği.',
         how_kicker: 'Nasıl çalışır', how_title: 'Üç adımda takipte kal',
         s1t: 'Fotoğraf çek', s1d: 'Yemeğini çek ya da galeriden seç. Birden fazla yemek aynı karede olabilir.',
         s2t: 'AI hesaplasın', s2d: 'Saniyeler içinde kalori ve makrolar hazır. Porsiyonu düzelt, malzeme ekle-çıkar — anında yeniden hesaplanır.',
         s3t: 'XP kazan, hedefe yürü', s3d: 'Kaydet, XP kazan, serini büyüt. Apple Health aktiviten bütçene eklensin, koçun yolunu çizsin.',
+        st1: 'Dil desteği', st2: 'Diyet modu', st3: 'Adım hedefi', st4: 'Hazır yiyecek',
         cta_title: 'İlk denenler arasında ol',
-        cta_sub: 'FitBite yakında App Store\u2019da. E-postanı bırak, çıktığı gün haber verelim.',
-        foot_soon: 'App Store\u2019da yakında', foot_privacy: 'Gizlilik', foot_terms: 'Koşullar', foot_support: 'Destek',
+        cta_sub: "FitBite yakında App Store'da. E-postanı bırak, çıktığı gün haber verelim.",
+        foot_soon: "App Store'da yakında", foot_privacy: 'Gizlilik', foot_terms: 'Koşullar', foot_support: 'Destek',
       },
       en: {
         nav_features: 'Features', nav_how: 'How it works',
@@ -426,10 +591,11 @@
         scr_bonus: '+320 kcal activity bonus',
         scr_carbs: 'Carbs', scr_fat: 'Fat',
         scr_health: 'Health', scr_steps: 'Steps', scr_dist: 'Distance', scr_exercise: 'Exercise', scr_hr: 'Heart rate', scr_min: 'min',
+        mq: ['AI calorie analysis', 'Apple Health', 'XP & ranks', 'Daily AI plan', 'Barcode scan', 'Water tracking', 'Activity bonus', 'Macro coach'],
         feat_kicker: 'Features', feat_title: 'Stop counting calories, start snapping',
         feat_sub: 'FitBite hands the boring parts of diet tracking to AI — you just focus on your food.',
         f1t: 'AI photo analysis', f1d: 'Snap your plate; the Gemini-powered engine recognizes the food and breaks down calories, protein, carbs and fat. Barcode scanning included.',
-        f2t: 'Apple Health & activity bonus', f2d: 'Steps, workouts and burned calories sync automatically. On active days your calorie budget grows — and it\u2019s shown clearly.',
+        f2t: 'Apple Health & activity bonus', f2d: 'Steps, workouts and burned calories sync automatically. On active days your calorie budget grows — and it is shown clearly.',
         f3t: 'AI diet coach', f3d: 'Pick balanced, high-protein, low-carb or keto; your coach says "eat this much more protein" and builds a full daily meal plan in one tap.',
         f4t: 'XP & rank system', f4d: 'Every log earns XP. Climb ranks, protect your streak, and let Bitey the mascot keep you motivated.',
         f5t: 'Barcode & smart search', f5d: 'Scan packaged foods by barcode; a local database + OpenFoodFacts + AI estimation trio finds any meal.',
@@ -438,14 +604,28 @@
         s1t: 'Snap a photo', s1d: 'Shoot your meal or pick from your gallery. Multiple dishes in one frame? No problem.',
         s2t: 'Let AI do the math', s2d: 'Calories and macros ready in seconds. Fix the portion, add or remove ingredients — it recalculates instantly.',
         s3t: 'Earn XP, hit your goal', s3d: 'Log it, earn XP, grow your streak. Apple Health activity feeds your budget while your coach plans the way.',
+        st1: 'Languages', st2: 'Diet modes', st3: 'Step goal', st4: 'Foods built in',
         cta_title: 'Be among the first to try it',
-        cta_sub: 'FitBite is coming soon to the App Store. Drop your email and we\u2019ll ping you on launch day.',
+        cta_sub: "FitBite is coming soon to the App Store. Drop your email and we'll ping you on launch day.",
         foot_soon: 'Coming soon to the App Store', foot_privacy: 'Privacy Policy', foot_terms: 'Terms', foot_support: 'Support',
       },
     };
 
     var lang = localStorage.getItem('fitbite_lang')
       || ((navigator.language || 'en').toLowerCase().indexOf('tr') === 0 ? 'tr' : 'en');
+
+    function buildMarquee() {
+      var items = I[lang].mq;
+      var half = '';
+      for (var r = 0; r < 2; r++) {
+        for (var i = 0; i < items.length; i++) {
+          half += '<span class="' + ((i % 2 === 0) ? 'solid' : '') + '">' + items[i] + ' ✦</span>';
+        }
+      }
+      // sorunsuz döngü için içerik 2x — animasyon %50 kaydırır
+      document.getElementById('mq1').innerHTML = half + half;
+      document.getElementById('mq2').innerHTML = half + half;
+    }
 
     function applyLang() {
       var d = I[lang];
@@ -462,6 +642,7 @@
       document.title = lang === 'tr'
         ? 'FitBite — Fotoğrafını çek, kalorini bil'
         : 'FitBite — Snap your meal. Know your calories.';
+      buildMarquee();
     }
     document.getElementById('langBtn').addEventListener('click', function () {
       lang = lang === 'tr' ? 'en' : 'tr';
@@ -470,7 +651,7 @@
     });
     applyLang();
 
-    // ================== waitlist submit ==================
+    // ============ waitlist ============
     function bindForm(formId, emailId, msgId) {
       var form = document.getElementById(formId);
       var msg = document.getElementById(msgId);
@@ -482,7 +663,6 @@
           msg.textContent = I[lang].err_msg; msg.classList.add('err'); return;
         }
         if (FORMSPREE_ENDPOINT.indexOf('YOUR_FORM_ID') !== -1) {
-          // Formspree henüz bağlanmadı — e-posta istemcisine düş.
           window.location.href = 'mailto:hello@fitbite.dev?subject=FitBite%20waitlist&body=' + encodeURIComponent(email);
           return;
         }
@@ -501,11 +681,69 @@
     bindForm('waitlistForm', 'wlEmail', 'formMsg');
     bindForm('waitlistForm2', 'wlEmail2', 'formMsg2');
 
-    // ================== reveal on scroll ==================
+    // ============ scroll: reveal + parallax + progress ============
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
     }, { threshold: 0.12 });
     document.querySelectorAll('.rv').forEach(function (el) { io.observe(el); });
+
+    var pxEls = Array.prototype.slice.call(document.querySelectorAll('[data-px]'));
+    var progress = document.getElementById('progress');
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        var y = window.scrollY || 0;
+        if (!reduceMotion) {
+          pxEls.forEach(function (el) {
+            el.style.transform = 'translate3d(0,' + (y * parseFloat(el.getAttribute('data-px'))) + 'px,0)';
+          });
+        }
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        progress.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
+        ticking = false;
+      });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // ============ telefon tilt (masaüstü) ============
+    var tilt = document.getElementById('tilt');
+    var hero = document.getElementById('hero');
+    if (tilt && hero && !reduceMotion && window.matchMedia('(hover: hover)').matches) {
+      hero.addEventListener('mousemove', function (e) {
+        var r = hero.getBoundingClientRect();
+        var cx = (e.clientX - r.left) / r.width - 0.5;
+        var cy = (e.clientY - r.top) / r.height - 0.5;
+        tilt.style.transform = 'rotateY(' + (cx * 10) + 'deg) rotateX(' + (-cy * 8) + 'deg)';
+      });
+      hero.addEventListener('mouseleave', function () { tilt.style.transform = 'rotateY(0) rotateX(0)'; });
+    }
+
+    // ============ sayaçlar ============
+    function animateCount(el) {
+      var target = parseInt(el.getAttribute('data-count'), 10);
+      var suffix = el.getAttribute('data-suffix') || '';
+      var t0 = null, dur = 1600;
+      function frame(t) {
+        if (!t0) t0 = t;
+        var p = Math.min(1, (t - t0) / dur);
+        var eased = 1 - Math.pow(1 - p, 3);
+        var val = Math.round(target * eased);
+        el.textContent = val.toLocaleString(lang === 'tr' ? 'tr-TR' : 'en-US') + (p === 1 ? suffix : '');
+        if (p < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+    var cio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { animateCount(en.target); cio.unobserve(en.target); }
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('[data-count]').forEach(function (el) { cio.observe(el); });
   </script>
 </body>
 </html>
