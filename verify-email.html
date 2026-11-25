@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Confirm email - FitBite</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="FitBite home">
+        <span class="brand-mark">FB</span>
+        <span>FitBite</span>
+      </a>
+    </header>
+
+    <main class="document">
+      <p class="eyebrow" id="eyebrow">FitBite</p>
+      <h1 id="title">Confirm your new email</h1>
+      <p id="body">Tap the button below to finish changing the email on your FitBite account.</p>
+      <p>
+        <!-- Onay bilerek dugmeyle: e-posta tarayicilari (Outlook Safe Links vb.)
+             linki onceden acabiliyor; istek ancak kullanici dokununca gider. -->
+        <button id="confirm" type="button" style="font:inherit;font-weight:700;padding:14px 24px;border-radius:12px;border:0;cursor:pointer;background:#7E57C2;color:#fff">
+          Confirm email
+        </button>
+      </p>
+      <p id="status" role="status" aria-live="polite"></p>
+    </main>
+
+    <script>
+      (function () {
+        var API = 'https://fitbite-backend-xorm.onrender.com/api/user/verify-email';
+        var tr = /^tr\b/i.test(navigator.language || '');
+        var M = tr ? {
+          title: 'Yeni e-posta adresini onayla',
+          body: 'FitBite hesabının e-posta değişikliğini tamamlamak için aşağıdaki düğmeye dokun.',
+          btn: 'E-postayı onayla',
+          working: 'Onaylanıyor… (sunucu uyanıyorsa 30 sn sürebilir)',
+          ok: 'E-posta adresin güncellendi. Uygulamada yeni adresinle giriş yapabilirsin.',
+          invalid: 'Bu bağlantı geçersiz ya da süresi dolmuş. Uygulamadan yeniden e-posta değişikliği iste.',
+          taken: 'Bu e-posta adresi artık başka bir hesapta kullanılıyor.',
+          network: 'Sunucuya ulaşılamadı. Biraz sonra tekrar dene.',
+          missing: 'Bağlantıda doğrulama kodu yok. E-postadaki bağlantıyı tam olarak aç.'
+        } : {
+          title: 'Confirm your new email',
+          body: 'Tap the button below to finish changing the email on your FitBite account.',
+          btn: 'Confirm email',
+          working: 'Confirming… (this can take ~30 s if the server is waking up)',
+          ok: 'Your email has been updated. You can now sign in with your new address.',
+          invalid: 'This link is invalid or has expired. Request the email change again from the app.',
+          taken: 'This email address is already used by another account.',
+          network: 'Could not reach the server. Please try again shortly.',
+          missing: 'The link has no verification code. Open the full link from the email.'
+        };
+        document.documentElement.lang = tr ? 'tr' : 'en';
+        document.getElementById('title').textContent = M.title;
+        document.getElementById('body').textContent = M.body;
+        var btn = document.getElementById('confirm');
+        var status = document.getElementById('status');
+        btn.textContent = M.btn;
+
+        var token = new URLSearchParams(location.search).get('token');
+        if (!token) { status.textContent = M.missing; btn.disabled = true; return; }
+
+        btn.addEventListener('click', function () {
+          btn.disabled = true;
+          status.textContent = M.working;
+          fetch(API + '?token=' + encodeURIComponent(token))
+            .then(function (r) {
+              if (r.ok) { status.textContent = M.ok; btn.style.display = 'none'; return; }
+              status.textContent = r.status === 409 ? M.taken : M.invalid;
+              if (r.status !== 400 && r.status !== 409) btn.disabled = false;
+            })
+            .catch(function () { status.textContent = M.network; btn.disabled = false; });
+        });
+      })();
+    </script>
+  </body>
+</html>
